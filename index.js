@@ -1,6 +1,8 @@
-const express = require('express')
-const app = express()
-const port = 3000
+const {KEY} = require('./watchApiInfo');
+const express = require('express');
+const app = express();
+const port = 3000;
+app.set('query parser', 'extended');
 
 const { google } = require('googleapis');
 const auth = new google.auth.GoogleAuth({
@@ -10,6 +12,12 @@ const auth = new google.auth.GoogleAuth({
 const calendar = google.calendar({version: 'v3', auth});
 
 app.get('/mycalendar', (req, res) => {
+    
+    if(req.query.KEY !== KEY){
+        res.statusCode = 404;
+        return res.send()
+    }
+
     calendar.events.list({
         calendarId: 'wier.adam@gmail.com',
         timeMin: (new Date()).toISOString(),
